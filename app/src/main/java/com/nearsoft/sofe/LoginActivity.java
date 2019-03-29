@@ -3,6 +3,7 @@ package com.nearsoft.sofe;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.transition.TransitionManager;
@@ -15,9 +16,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.nearsoft.sofe.map.view.MapsActivity;
 
 import java.util.Objects;
@@ -99,14 +105,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void loginUser() {
         //FIXME: user needs to login with the email, although the UI uses the username.
-        mFirebaseAuth.signInWithEmailAndPassword(mEmailEditText.getText().toString(), mUserPassword.getText().toString()).addOnCompleteListener(this, task -> {
-            if (task.isSuccessful()) {
-                Intent mapsIntent = new Intent(this, MapsActivity.class);
-                startActivity(mapsIntent);
-            } else {
-                showInvalidLoginPopup();
-            }
-        });
+        isLoginValid();
     }
 
     private void registerUser() {
@@ -140,8 +139,28 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean isLoginValid() {
-        //TODO use firebase?
+        mFirebaseAuth.signInWithEmailAndPassword(mEmailEditText.getText().toString(), mUserPassword.getText().toString())
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            loginCorrect();
+
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            showInvalidLoginPopup();
+                        }
+
+                        // ...
+                    }
+                });
         return mEmailEditText.getText().toString().equals("Luis") && mUserPassword.getText().toString().equals("Pass");
+    }
+
+    private void loginCorrect()
+    {
+        Intent mapsIntent = new Intent(this, MapsActivity.class);
+        startActivity(mapsIntent);
     }
 
     private void showCredentialsBox(int upperViewId) {
