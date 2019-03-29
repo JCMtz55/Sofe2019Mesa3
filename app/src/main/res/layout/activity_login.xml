@@ -113,8 +113,7 @@
         android:layout_marginEnd="16dp"
         android:gravity="center|center_vertical"
         android:text="¿Olvidó su contraseña?"
-        android:textAlignment="textEnd"
-        android:textColor="#DC3737"
+        android:textColor="#FFFFBD"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
