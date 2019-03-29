@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -99,27 +100,39 @@ public class LoginActivity extends AppCompatActivity {
 
     private void loginUser() {
         //FIXME: user needs to login with the email, although the UI uses the username.
-        mFirebaseAuth.signInWithEmailAndPassword(mEmailEditText.getText().toString(), mUserPassword.getText().toString()).addOnCompleteListener(this, task -> {
-            if (task.isSuccessful()) {
-                Intent mapsIntent = new Intent(this, MapsActivity.class);
-                startActivity(mapsIntent);
-            } else {
-                showInvalidLoginPopup();
-            }
-        });
+        if (mEmailEditText.getText().toString().equals("") || mUserPassword.getText().toString().equals("")) {
+            Toast fieldsvacios = Toast.makeText(getApplicationContext(), "Favor de llenar los campos", Toast.LENGTH_SHORT);
+            fieldsvacios.show();
+
+        } else {
+            mFirebaseAuth.signInWithEmailAndPassword(mEmailEditText.getText().toString(), mUserPassword.getText().toString()).addOnCompleteListener(this, task -> {
+                if (task.isSuccessful()) {
+                    Intent mapsIntent = new Intent(this, MapsActivity.class);
+                    startActivity(mapsIntent);
+                } else {
+                    showInvalidLoginPopup();
+                }
+            });
+        }
     }
 
     private void registerUser() {
         //FIXME: What happens if the required fields are empty?
-        mFirebaseAuth.createUserWithEmailAndPassword(mEmailEditText.getText().toString(), mUserPassword.getText().toString()).addOnCompleteListener(this, task -> {
-            if (task.isSuccessful()) {
-                Intent mapsIntent = new Intent(this, MapsActivity.class);
-                startActivity(mapsIntent);
-            } else {
-                Log.d("ERROR", Objects.requireNonNull(task.getException()).getMessage());
-                showInvalidLoginPopup();
-            }
-        });
+        if (mEmailEditText.getText().toString().equals("") || mUserPassword.getText().toString().equals("")) {
+            Toast fieldsvacios = Toast.makeText(getApplicationContext(), "Favor de llenar los campos", Toast.LENGTH_SHORT);
+            fieldsvacios.show();
+
+        } else {
+            mFirebaseAuth.createUserWithEmailAndPassword(mEmailEditText.getText().toString(), mUserPassword.getText().toString()).addOnCompleteListener(this, task -> {
+                if (task.isSuccessful()) {
+                    Intent mapsIntent = new Intent(this, MapsActivity.class);
+                    startActivity(mapsIntent);
+                } else {
+                    Log.d("ERROR", Objects.requireNonNull(task.getException()).getMessage());
+                    showInvalidRegistrationPopup();
+                }
+            });
+        }
     }
 
     private void showInvalidLoginPopup() {
@@ -136,7 +149,24 @@ public class LoginActivity extends AppCompatActivity {
             int bottomMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
             popupConstraintSet.connect(R.id.invalidLoginPopup, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.TOP, bottomMargin);
             popupConstraintSet.applyTo(mConstraintLayout);
-        }, 500);
+        }, 1500);
+    }
+
+    private void showInvalidRegistrationPopup() {
+        //FIXME: the message is showing invalid login also for registration but should be a different message.
+        ConstraintSet popupConstraintSet = new ConstraintSet();
+        popupConstraintSet.clone(mConstraintLayout);
+        popupConstraintSet.clear(R.id.invalidRegistrationPopup, ConstraintSet.BOTTOM);
+        popupConstraintSet.connect(R.id.invalidRegistrationPopup, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
+        TransitionManager.beginDelayedTransition(mConstraintLayout);
+        popupConstraintSet.applyTo(mConstraintLayout);
+        final Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            popupConstraintSet.clear(R.id.invalidRegistrationPopup, ConstraintSet.TOP);
+            int bottomMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
+            popupConstraintSet.connect(R.id.invalidRegistrationPopup, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.TOP, bottomMargin);
+            popupConstraintSet.applyTo(mConstraintLayout);
+        }, 1500);
     }
 
     private boolean isLoginValid() {

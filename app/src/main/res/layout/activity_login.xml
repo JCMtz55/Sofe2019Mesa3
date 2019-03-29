@@ -8,6 +8,29 @@
     android:orientation="vertical"
     tools:context=".LoginActivity">
 
+    <android.support.v7.widget.CardView
+        android:id="@+id/invalidRegistrationPopup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        app:cardElevation="4dp"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/textView00"
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="13dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="13dp"
+            android:text="Registro Inválido"
+            android:textAlignment="center"
+            android:textColor="#EFC328" />
+    </android.support.v7.widget.CardView>
+
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
